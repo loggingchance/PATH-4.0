@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="96" fill="#3a2618"/>
+<!-- Growth rings -->
+<g transform="translate(256,280)" fill="none" stroke="#c47a3a">
+<circle r="220" stroke-width="3" opacity="0.25"/>
+<circle r="190" stroke-width="2" opacity="0.20"/>
+<circle r="160" stroke-width="3" opacity="0.27"/>
+<circle r="132" stroke-width="2" opacity="0.20"/>
+<circle r="108" stroke-width="2.5" opacity="0.25"/>
+<circle r="86" stroke-width="1.5" opacity="0.20"/>
+<circle r="66" stroke-width="2" opacity="0.24"/>
+<circle r="50" stroke-width="1.5" opacity="0.20"/>
+<circle r="36" stroke-width="2" opacity="0.24"/>
+<circle r="24" stroke-width="1" opacity="0.20"/>
+</g>
+<!-- Title -->
+<text x="256" y="200" text-anchor="middle" font-family="Georgia,serif" font-size="120" font-weight="700" fill="#e8dcc8" letter-spacing="6">PATH</text>
+<text x="256" y="260" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="48" font-weight="700" fill="#c47a3a" letter-spacing="4">4.0</text>
+<line x1="130" y1="280" x2="382" y2="280" stroke="#c47a3a" stroke-width="2" opacity="0.4"/>
+<text x="256" y="380" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="400" fill="#8a7a68" letter-spacing="3">PLANNING &amp; ANALYSIS</text>
+<text x="256" y="410" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="400" fill="#8a7a68" letter-spacing="3">IN TIMBER HARVESTING</text>
+</svg>
