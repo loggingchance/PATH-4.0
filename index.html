@@ -152,7 +152,35 @@ input:focus,.tinput:focus{border-color:#c47a3a}
 .pw-reset{display:block;margin:18px auto 0;padding:10px 22px;font-size:14px;font-family:'DM Sans',sans-serif;background:0 0;border:2px solid #d4cdb8;border-radius:8px;color:#6a6e64;cursor:pointer}
 .pw-note{text-align:center;font-size:14px;color:#8a8e84;margin-top:14px;font-style:italic}
 
-@media print{.no-print{display:none!important}}
+@media print{.no-print{display:none!important}header,.nav,.sec-nav,.main,.footer{display:none!important}#report{display:block!important}}
+#report{display:none;font-family:'DM Sans',Helvetica,sans-serif;color:#1a1a1a;max-width:100%;padding:0;font-size:11px;line-height:1.4}
+#report *{box-sizing:border-box}
+.rpt-header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1a3a2a;padding-bottom:10px;margin-bottom:14px}
+.rpt-logo{font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:700;color:#1a3a2a;letter-spacing:3px}
+.rpt-logo span{font-size:14px;color:#c47a3a;margin-left:4px}
+.rpt-subtitle{font-size:9px;color:#6a6e64;text-align:right;letter-spacing:1px}
+.rpt-jobinfo{display:flex;justify-content:space-between;margin-bottom:12px;font-size:12px}
+.rpt-jobinfo div{flex:1}
+.rpt-jobinfo strong{color:#1a3a2a}
+.rpt-section{margin-bottom:10px}
+.rpt-section-title{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;color:#1a3a2a;text-transform:uppercase;letter-spacing:2px;border-bottom:1px solid #c8c4b8;padding-bottom:3px;margin-bottom:6px}
+.rpt-row{display:flex;justify-content:space-between;padding:2px 0;font-size:11px}
+.rpt-row.indent{padding-left:16px;color:#4a4e44}
+.rpt-row.total{font-weight:700;border-top:1px solid #c8c4b8;padding-top:4px;margin-top:4px;font-size:12px}
+.rpt-row .val{font-family:'DM Mono',monospace;text-align:right}
+.rpt-products{width:100%;border-collapse:collapse;margin:4px 0 8px;font-size:11px}
+.rpt-products th{text-align:left;font-weight:600;color:#1a3a2a;border-bottom:1px solid #c8c4b8;padding:3px 6px;font-size:10px}
+.rpt-products td{padding:2px 6px;border-bottom:1px solid #e8e4dc}
+.rpt-products td:nth-child(2),.rpt-products td:nth-child(3),.rpt-products td:nth-child(4){text-align:right;font-family:'DM Mono',monospace}
+.rpt-results{display:flex;gap:16px;margin:12px 0}
+.rpt-metric{flex:1;text-align:center;padding:14px 10px;border:2px solid #1a3a2a;border-radius:8px}
+.rpt-metric-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#6a6e64;margin-bottom:4px}
+.rpt-metric-val{font-family:'DM Mono',monospace;font-size:24px;font-weight:700;color:#1a3a2a}
+.rpt-metric.loss{border-color:#c45a3a}
+.rpt-metric.loss .rpt-metric-val{color:#c45a3a}
+.rpt-footer{margin-top:12px;padding-top:8px;border-top:1px solid #c8c4b8;display:flex;justify-content:space-between;font-size:9px;color:#8a8e84}
+.rpt-footer a{color:#c47a3a;text-decoration:none}
+@page{size:letter;margin:0.6in}
 </style>
 </head>
 <body>
@@ -206,6 +234,7 @@ input:focus,.tinput:focus{border-color:#c47a3a}
 <nav class="sec-nav no-print" id="secnav"></nav>
 <main class="main" id="main"></main>
 <footer class="footer no-print" id="footer"></footer>
+<div id="report"></div>
 
 <script>
 const SK="path4_data_v1";
@@ -248,10 +277,10 @@ function getWC(pw){
 
 function numField(label,sub,value,onchange,opts={}){
   const pfx=opts.prefix!==undefined?opts.prefix:"$";
-  return`<div class="field"><label>${label}</label>${sub?`<div class="sub">${sub}</div>`:""}<div class="input-row">${pfx?`<span class="pfx">${pfx}</span>`:""}<input type="number" value="${value||""}" oninput="${onchange}" class="${pfx?"has-pfx":""}" step="${opts.step||1}" min="${opts.min||0}" placeholder="0"></div></div>`;
+  return`<div class="field"><label>${label}</label>${sub?`<div class="sub">${sub}</div>`:""}<div class="input-row">${pfx?`<span class="pfx">${pfx}</span>`:""}<input type="number" value="${value||""}" onchange="${onchange}" class="${pfx?"has-pfx":""}" step="${opts.step||1}" min="${opts.min||0}" placeholder="0"></div></div>`;
 }
 function textField(label,value,onchange,ph=""){
-  return`<div class="field"><label>${label}</label><input type="text" value="${value}" oninput="${onchange}" placeholder="${ph}" style="font-family:'DM Sans',sans-serif"></div>`;
+  return`<div class="field"><label>${label}</label><input type="text" value="${value}" onchange="${onchange}" placeholder="${ph}" style="font-family:'DM Sans',sans-serif"></div>`;
 }
 function helpLink(stepIdx){
   return`<a class="step-help" onclick="showHelp(${stepIdx})">&#9656; How to use this step</a>`;
@@ -306,7 +335,7 @@ function renderProducts(){
   const d=S.products;
   const count=d.filter(p=>p.name.trim()).length;
   return helpLink(2)+`<div class="step-intro">List your products and the average net proceeds from a load of each (gross revenue, less stumpage and trucking).</div>`+
-    d.map((p,i)=>`<div class="prod-row"><div class="prod-num">${i+1}</div><div style="flex:1"><input class="prod-input" type="text" value="${p.name}" oninput="updateProd(${i},'name',this.value)" placeholder="${i===0?"e.g. Hardwood sawlogs":"Product name"}"></div><div style="width:110px"><div class="input-row"><span class="pfx" style="top:7px">$</span><input class="prod-input has-pfx" type="number" value="${p.netPerLoad||""}" oninput="updateProd(${i},'netPerLoad',this.value)" placeholder="0" step="1" style="text-align:right;font-family:'DM Mono',monospace"></div></div></div>`).join("")+
+    d.map((p,i)=>`<div class="prod-row"><div class="prod-num">${i+1}</div><div style="flex:1"><input class="prod-input" type="text" value="${p.name}" onchange="updateProd(${i},'name',this.value)" placeholder="${i===0?"e.g. Hardwood sawlogs":"Product name"}"></div><div style="width:110px"><div class="input-row"><span class="pfx" style="top:7px">$</span><input class="prod-input has-pfx" type="number" value="${p.netPerLoad||""}" onchange="updateProd(${i},'netPerLoad',this.value)" placeholder="0" step="1" style="text-align:right;font-family:'DM Mono',monospace"></div></div></div>`).join("")+
     `<div class="prod-count">${count} product${count!==1?"s":""} entered</div>`;
 }
 
@@ -333,11 +362,11 @@ function renderResults(){
     [["week","Week"],["job","Whole Job"],["year","Year"]].map(([v,l])=>`<button class="seg-btn${d.timeFrame===v?" active":""}" onclick="updateRes('timeFrame','${v}');render()">${l}</button>`).join("")+
     `</div></div>`;
   if(d.timeFrame==="job") h+=numField("Weeks in Job","",d.jobWeeks,"updateRes('jobWeeks',this.value);render()",{prefix:"",min:1});
-  h+=`<div class="field"><label>Effort &mdash; ${d.effort}%</label><div class="sub">Percentage of normal effort made during this period</div><input type="range" min="0" max="100" step="5" value="${d.effort}" oninput="updateRes('effort',parseInt(this.value));render()" class="effort-range"><div class="effort-ticks"><span>0%</span><span>50%</span><span>100%</span></div></div>`;
+  h+=`<div class="field"><label>Effort &mdash; ${d.effort}%</label><div class="sub">Percentage of normal effort made during this period</div><input type="range" min="0" max="140" step="5" value="${d.effort}" oninput="updateRes('effort',parseInt(this.value));render()" class="effort-range"><div class="effort-ticks"><span>0%</span><span>100%</span><span>140%</span></div></div>`;
   h+=`<div class="section-label">Production (${tfLabel})</div>`;
   if(!active.length) h+=`<div class="sub" style="text-align:center;padding:20px">No products entered. Go back to the Products step.</div>`;
   active.forEach(p=>{
-    h+=`<div class="load-row"><div style="flex:1"><div class="load-name">${p.name}</div><div class="load-rate">${fmt(p.netPerLoad)}/load</div></div><div style="width:90px"><input type="number" value="${d.loads[p.i]||""}" oninput="updateLoad(${p.i},this.value)" placeholder="0" min="0" style="text-align:center"></div><div class="load-total">${fmt(d.loads[p.i]*p.netPerLoad)}</div></div>`;
+    h+=`<div class="load-row"><div style="flex:1"><div class="load-name">${p.name}</div><div class="load-rate">${fmt(p.netPerLoad)}/load</div></div><div style="width:90px"><input type="number" value="${d.loads[p.i]||""}" onchange="updateLoad(${p.i},this.value)" placeholder="0" min="0" style="text-align:center"></div><div class="load-total">${fmt(d.loads[p.i]*p.netPerLoad)}</div></div>`;
   });
   h+=`<div class="section-label">Adjustments</div>`+
     numField("Additional Job Costs","Moving, roadwork, etc.",d.additionalCosts,"updateRes('additionalCosts',this.value)")+
@@ -353,8 +382,83 @@ function renderResults(){
     `<div class="rrow"><span>Investment</span><span>${fmt(investment)}</span></div></div>`+
     `<div class="metric-row"><div class="metric-box ${profit>=0?"pos":"neg"}"><div class="metric-label">${profit>=0?"Profit":"Loss"}</div><div class="metric-value">${fmt(Math.round(profit))}</div></div>`+
     `<div class="metric-box ${roi>=0?"pos":"neg"}"><div class="metric-label">ROI</div><div class="metric-value">${pct(roi)}</div></div></div>`+
-    `<button class="print-btn" onclick="window.print()">Print / Save Report</button>`;
+    `<button class="print-btn" onclick="printReport()">Print / Save Report</button>`;
   return h;
+}
+
+function printReport(){
+  const d=S.results,prods=S.products,wc=getWC(),oh=getOH(),sp=S.specs;
+  const active=prods.map((p,i)=>({...p,i})).filter(p=>p.name.trim());
+  const periodWeeks=d.timeFrame==="week"?1:d.timeFrame==="job"?d.jobWeeks:wc.weeksOfProduction;
+  const ef=d.effort/100;
+  const revenue=active.reduce((s,p)=>s+d.loads[p.i]*p.netPerLoad,0);
+  const totalLoads=active.reduce((s,p)=>s+d.loads[p.i],0);
+  const periodCosts=wc.totalWeekly*periodWeeks*ef;
+  const totalCosts=periodCosts+d.additionalCosts;
+  const totalRevenue=revenue+d.additionalRevenue;
+  const profit=totalRevenue-totalCosts;
+  const investment=wc.equipStart;
+  const roi=investment>0?profit/investment:0;
+  const tfLabel=d.timeFrame==="week"?"1 Week":d.timeFrame==="job"?d.jobWeeks+"-Week Job":"Full Year ("+sp.weeksOfProduction+" wks)";
+  const today=new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  const dep=(sp.equipStart-sp.equipEnd)/(sp.weeksOfProduction||1);
+  const pay=sp.annualPayments/(sp.weeksOfProduction||1);
+
+  let prodRows=active.map(p=>`<tr><td>${p.name}</td><td>${fmt(p.netPerLoad)}</td><td>${d.loads[p.i]}</td><td>${fmt(d.loads[p.i]*p.netPerLoad)}</td></tr>`).join("");
+
+  let rpt=`<div class="rpt-header"><div><div class="rpt-logo">PATH<span>4.0</span></div></div><div class="rpt-subtitle">PLANNING &amp; ANALYSIS<br>IN TIMBER HARVESTING</div></div>`;
+
+  rpt+=`<div class="rpt-jobinfo"><div><strong>${d.businessName||"—"}</strong><br>${d.jobName||"—"}</div><div style="text-align:center"><strong>Period:</strong> ${tfLabel}<br><strong>Effort:</strong> ${d.effort}%</div><div style="text-align:right">${today}</div></div>`;
+
+  rpt+=`<div style="display:flex;gap:20px"><div style="flex:1">`;
+
+  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Annual Overhead</div>`;
+  const ohKeys=[["Insurance","insurance"],["Repairs & Maint.","repairs"],["Office","office"],["Vehicle","vehicle"],["Supplies","supplies"],["Other","other"]];
+  ohKeys.forEach(([l,k])=>{if(S.overhead[k])rpt+=`<div class="rpt-row indent"><span>${l}</span><span class="val">${fmt(S.overhead[k])}</span></div>`});
+  rpt+=`<div class="rpt-row total"><span>Total Overhead</span><span class="val">${fmt(oh)}</span></div></div>`;
+
+  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Weekly Cost Breakdown</div>`;
+  rpt+=`<div class="rpt-row indent"><span>Equipment (${dep>=pay?"depreciation":"payments"})</span><span class="val">${fmtDec(wc.weeklyEquip)}</span></div>`;
+  rpt+=`<div class="rpt-row indent"><span>Overhead</span><span class="val">${fmtDec(wc.weeklyOverhead)}</span></div>`;
+  rpt+=`<div class="rpt-row indent"><span>Payroll</span><span class="val">${fmtDec(wc.weeklyPayroll)}</span></div>`;
+  rpt+=`<div class="rpt-row indent"><span>Fuel</span><span class="val">${fmtDec(wc.weeklyFuel)}</span></div>`;
+  rpt+=`<div class="rpt-row total"><span>Total Weekly Cost</span><span class="val">${fmtDec(wc.totalWeekly)}</span></div></div>`;
+
+  rpt+=`</div><div style="flex:1">`;
+
+  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Equipment</div>`;
+  rpt+=`<div class="rpt-row indent"><span>Start Value (FMV)</span><span class="val">${fmt(sp.equipStart)}</span></div>`;
+  rpt+=`<div class="rpt-row indent"><span>End Value (FMV)</span><span class="val">${fmt(sp.equipEnd)}</span></div>`;
+  rpt+=`<div class="rpt-row indent"><span>Annual Depreciation</span><span class="val">${fmt(sp.equipStart-sp.equipEnd)}</span></div>`;
+  rpt+=`<div class="rpt-row indent"><span>Annual Payments</span><span class="val">${fmt(sp.annualPayments)}</span></div>`;
+  rpt+=`</div>`;
+
+  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Operations</div>`;
+  rpt+=`<div class="rpt-row indent"><span>Weeks of Production</span><span class="val">${sp.weeksOfProduction}</span></div>`;
+  rpt+=`<div class="rpt-row indent"><span>Annual Payroll</span><span class="val">${fmt(sp.annualPayroll)}</span></div>`;
+  rpt+=`<div class="rpt-row indent"><span>Fuel</span><span class="val">${sp.fuelGallonsPerWeek} gal/wk @ ${fmtDec(sp.fuelPricePerGallon)}</span></div>`;
+  rpt+=`</div>`;
+
+  rpt+=`</div></div>`;
+
+  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Production &amp; Revenue — ${tfLabel}</div>`;
+  rpt+=`<table class="rpt-products"><tr><th>Product</th><th>Net/Load</th><th>Loads</th><th>Revenue</th></tr>${prodRows}</table>`;
+  if(d.additionalRevenue>0) rpt+=`<div class="rpt-row indent"><span>Additional Revenue</span><span class="val">+${fmt(d.additionalRevenue)}</span></div>`;
+  rpt+=`<div class="rpt-row total"><span>Total Revenue (${totalLoads} loads)</span><span class="val">${fmt(totalRevenue)}</span></div></div>`;
+
+  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Costs — ${tfLabel}</div>`;
+  rpt+=`<div class="rpt-row indent"><span>Operating Costs (${periodWeeks} wk × ${d.effort}%)</span><span class="val">${fmt(Math.round(periodCosts))}</span></div>`;
+  if(d.additionalCosts>0) rpt+=`<div class="rpt-row indent"><span>Additional Job Costs</span><span class="val">+${fmt(d.additionalCosts)}</span></div>`;
+  rpt+=`<div class="rpt-row total"><span>Total Costs</span><span class="val">${fmt(Math.round(totalCosts))}</span></div></div>`;
+
+  rpt+=`<div class="rpt-results"><div class="rpt-metric${profit<0?" loss":""}"><div class="rpt-metric-label">${profit>=0?"Profit":"Loss"}</div><div class="rpt-metric-val">${fmt(Math.round(profit))}</div></div>`;
+  rpt+=`<div class="rpt-metric${roi<0?" loss":""}"><div class="rpt-metric-label">Return on Investment</div><div class="rpt-metric-val">${pct(roi)}</div></div>`;
+  rpt+=`<div class="rpt-metric"><div class="rpt-metric-label">Investment</div><div class="rpt-metric-val">${fmt(investment)}</div></div></div>`;
+
+  rpt+=`<div class="rpt-footer"><span>PATH 4.0 — Planning &amp; Analysis in Timber Harvesting</span><span>Northeast Forests LLC — <a href="https://path.lumbermen.org">path.lumbermen.org</a></span></div>`;
+
+  document.getElementById("report").innerHTML=rpt;
+  window.print();
 }
 
 function renderPATHWAYS(){
@@ -520,7 +624,8 @@ function updateOH(k,v){S.overhead[k]=parseFloat(v)||0;render()}
 function updateSpec(k,v){S.specs[k]=parseFloat(v)||0;render()}
 function updateProd(i,k,v){S.products[i][k]=k==="name"?v:(parseFloat(v)||0);render()}
 function updateRes(k,v){
-  if(k==="timeFrame"||k==="businessName"||k==="jobName")S.results[k]=v;
+  if(k==="timeFrame")S.results[k]=v;
+  else if(k==="businessName"||k==="jobName"){S.results[k]=v;save();return}
   else S.results[k]=parseFloat(v)||0;
   save();
 }
