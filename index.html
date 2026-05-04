@@ -406,59 +406,93 @@ function printReport(){
 
   let prodRows=active.map(p=>`<tr><td>${p.name}</td><td>${fmt(p.netPerLoad)}</td><td>${d.loads[p.i]}</td><td>${fmt(d.loads[p.i]*p.netPerLoad)}</td></tr>`).join("");
 
-  let rpt=`<div class="rpt-header"><div><div class="rpt-logo">PATH<span>4.0</span></div></div><div class="rpt-subtitle">PLANNING &amp; ANALYSIS<br>IN TIMBER HARVESTING</div></div>`;
+  const w=window.open("","_blank");
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PATH 4.0 Report — ${d.businessName||"Report"}</title>
+<style>
+@page{size:letter;margin:0.6in}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Helvetica,Arial,sans-serif;color:#1a1a1a;font-size:11px;line-height:1.4;padding:10px}
+.rpt-header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1a3a2a;padding-bottom:10px;margin-bottom:14px}
+.rpt-logo{font-family:Georgia,serif;font-size:28px;font-weight:700;color:#1a3a2a;letter-spacing:3px}
+.rpt-logo span{font-size:14px;color:#c47a3a;margin-left:4px}
+.rpt-subtitle{font-size:9px;color:#6a6e64;text-align:right;letter-spacing:1px}
+.rpt-jobinfo{display:flex;justify-content:space-between;margin-bottom:14px;font-size:12px}
+.rpt-jobinfo div{flex:1}
+.rpt-jobinfo strong{color:#1a3a2a}
+.rpt-cols{display:flex;gap:24px;margin-bottom:10px}
+.rpt-col{flex:1}
+.rpt-section{margin-bottom:10px}
+.rpt-section-title{font-size:11px;font-weight:700;color:#1a3a2a;text-transform:uppercase;letter-spacing:2px;border-bottom:1px solid #c8c4b8;padding-bottom:3px;margin-bottom:6px}
+.rpt-row{display:flex;justify-content:space-between;padding:2px 0;font-size:11px}
+.rpt-row.indent{padding-left:16px;color:#4a4e44}
+.rpt-row.total{font-weight:700;border-top:1px solid #c8c4b8;padding-top:4px;margin-top:4px;font-size:12px}
+.rpt-row .val{font-family:'Courier New',monospace;text-align:right}
+.rpt-products{width:100%;border-collapse:collapse;margin:4px 0 8px;font-size:11px}
+.rpt-products th{text-align:left;font-weight:600;color:#1a3a2a;border-bottom:1px solid #c8c4b8;padding:3px 6px;font-size:10px}
+.rpt-products td{padding:2px 6px;border-bottom:1px solid #e8e4dc}
+.rpt-products td:nth-child(2),.rpt-products td:nth-child(3),.rpt-products td:nth-child(4){text-align:right;font-family:'Courier New',monospace}
+.rpt-results{display:flex;gap:16px;margin:14px 0}
+.rpt-metric{flex:1;text-align:center;padding:14px 10px;border:2px solid #1a3a2a;border-radius:8px}
+.rpt-metric-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#6a6e64;margin-bottom:4px}
+.rpt-metric-val{font-family:'Courier New',monospace;font-size:24px;font-weight:700;color:#1a3a2a}
+.rpt-metric.loss{border-color:#c45a3a}
+.rpt-metric.loss .rpt-metric-val{color:#c45a3a}
+.rpt-footer{margin-top:14px;padding-top:8px;border-top:1px solid #c8c4b8;display:flex;justify-content:space-between;font-size:9px;color:#8a8e84}
+</style></head><body>
 
-  rpt+=`<div class="rpt-jobinfo"><div><strong>${d.businessName||"—"}</strong><br>${d.jobName||"—"}</div><div style="text-align:center"><strong>Period:</strong> ${tfLabel}<br><strong>Effort:</strong> ${d.effort}%</div><div style="text-align:right">${today}</div></div>`;
+<div class="rpt-header"><div><div class="rpt-logo">PATH<span>4.0</span></div></div><div class="rpt-subtitle">PLANNING &amp; ANALYSIS<br>IN TIMBER HARVESTING</div></div>
 
-  rpt+=`<div style="display:flex;gap:20px"><div style="flex:1">`;
+<div class="rpt-jobinfo"><div><strong>${d.businessName||"—"}</strong><br>${d.jobName||"—"}</div><div style="text-align:center"><strong>Period:</strong> ${tfLabel}<br><strong>Effort:</strong> ${d.effort}%</div><div style="text-align:right">${today}</div></div>
 
-  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Annual Overhead</div>`;
-  const ohKeys=[["Insurance","insurance"],["Repairs & Maint.","repairs"],["Office","office"],["Vehicle","vehicle"],["Supplies","supplies"],["Other","other"]];
-  ohKeys.forEach(([l,k])=>{if(S.overhead[k])rpt+=`<div class="rpt-row indent"><span>${l}</span><span class="val">${fmt(S.overhead[k])}</span></div>`});
-  rpt+=`<div class="rpt-row total"><span>Total Overhead</span><span class="val">${fmt(oh)}</span></div></div>`;
+<div class="rpt-cols"><div class="rpt-col">
+<div class="rpt-section"><div class="rpt-section-title">Annual Overhead</div>
+${S.overhead.insurance?`<div class="rpt-row indent"><span>Insurance</span><span class="val">${fmt(S.overhead.insurance)}</span></div>`:""}
+${S.overhead.repairs?`<div class="rpt-row indent"><span>Repairs &amp; Maint.</span><span class="val">${fmt(S.overhead.repairs)}</span></div>`:""}
+${S.overhead.office?`<div class="rpt-row indent"><span>Office</span><span class="val">${fmt(S.overhead.office)}</span></div>`:""}
+${S.overhead.vehicle?`<div class="rpt-row indent"><span>Vehicle</span><span class="val">${fmt(S.overhead.vehicle)}</span></div>`:""}
+${S.overhead.supplies?`<div class="rpt-row indent"><span>Supplies</span><span class="val">${fmt(S.overhead.supplies)}</span></div>`:""}
+${S.overhead.other?`<div class="rpt-row indent"><span>Other</span><span class="val">${fmt(S.overhead.other)}</span></div>`:""}
+<div class="rpt-row total"><span>Total Overhead</span><span class="val">${fmt(oh)}</span></div></div>
 
-  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Weekly Cost Breakdown</div>`;
-  rpt+=`<div class="rpt-row indent"><span>Equipment (${dep>=pay?"depreciation":"payments"})</span><span class="val">${fmtDec(wc.weeklyEquip)}</span></div>`;
-  rpt+=`<div class="rpt-row indent"><span>Overhead</span><span class="val">${fmtDec(wc.weeklyOverhead)}</span></div>`;
-  rpt+=`<div class="rpt-row indent"><span>Payroll</span><span class="val">${fmtDec(wc.weeklyPayroll)}</span></div>`;
-  rpt+=`<div class="rpt-row indent"><span>Fuel</span><span class="val">${fmtDec(wc.weeklyFuel)}</span></div>`;
-  rpt+=`<div class="rpt-row total"><span>Total Weekly Cost</span><span class="val">${fmtDec(wc.totalWeekly)}</span></div></div>`;
+<div class="rpt-section"><div class="rpt-section-title">Weekly Cost Breakdown</div>
+<div class="rpt-row indent"><span>Equipment (${dep>=pay?"depreciation":"payments"})</span><span class="val">${fmtDec(wc.weeklyEquip)}</span></div>
+<div class="rpt-row indent"><span>Overhead</span><span class="val">${fmtDec(wc.weeklyOverhead)}</span></div>
+<div class="rpt-row indent"><span>Payroll</span><span class="val">${fmtDec(wc.weeklyPayroll)}</span></div>
+<div class="rpt-row indent"><span>Fuel</span><span class="val">${fmtDec(wc.weeklyFuel)}</span></div>
+<div class="rpt-row total"><span>Total Weekly Cost</span><span class="val">${fmtDec(wc.totalWeekly)}</span></div></div>
+</div><div class="rpt-col">
+<div class="rpt-section"><div class="rpt-section-title">Equipment</div>
+<div class="rpt-row indent"><span>Start Value (FMV)</span><span class="val">${fmt(sp.equipStart)}</span></div>
+<div class="rpt-row indent"><span>End Value (FMV)</span><span class="val">${fmt(sp.equipEnd)}</span></div>
+<div class="rpt-row indent"><span>Annual Depreciation</span><span class="val">${fmt(sp.equipStart-sp.equipEnd)}</span></div>
+<div class="rpt-row indent"><span>Annual Payments</span><span class="val">${fmt(sp.annualPayments)}</span></div>
+</div>
+<div class="rpt-section"><div class="rpt-section-title">Operations</div>
+<div class="rpt-row indent"><span>Weeks of Production</span><span class="val">${sp.weeksOfProduction}</span></div>
+<div class="rpt-row indent"><span>Annual Payroll</span><span class="val">${fmt(sp.annualPayroll)}</span></div>
+<div class="rpt-row indent"><span>Fuel</span><span class="val">${sp.fuelGallonsPerWeek} gal/wk @ ${fmtDec(sp.fuelPricePerGallon)}</span></div>
+</div>
+</div></div>
 
-  rpt+=`</div><div style="flex:1">`;
+<div class="rpt-section"><div class="rpt-section-title">Production &amp; Revenue — ${tfLabel}</div>
+<table class="rpt-products"><tr><th>Product</th><th>Net/Load</th><th>Loads</th><th>Revenue</th></tr>${prodRows}</table>
+${d.additionalRevenue>0?`<div class="rpt-row indent"><span>Additional Revenue</span><span class="val">+${fmt(d.additionalRevenue)}</span></div>`:""}
+<div class="rpt-row total"><span>Total Revenue (${totalLoads} loads)</span><span class="val">${fmt(totalRevenue)}</span></div></div>
 
-  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Equipment</div>`;
-  rpt+=`<div class="rpt-row indent"><span>Start Value (FMV)</span><span class="val">${fmt(sp.equipStart)}</span></div>`;
-  rpt+=`<div class="rpt-row indent"><span>End Value (FMV)</span><span class="val">${fmt(sp.equipEnd)}</span></div>`;
-  rpt+=`<div class="rpt-row indent"><span>Annual Depreciation</span><span class="val">${fmt(sp.equipStart-sp.equipEnd)}</span></div>`;
-  rpt+=`<div class="rpt-row indent"><span>Annual Payments</span><span class="val">${fmt(sp.annualPayments)}</span></div>`;
-  rpt+=`</div>`;
+<div class="rpt-section"><div class="rpt-section-title">Costs — ${tfLabel}</div>
+<div class="rpt-row indent"><span>Operating Costs (${periodWeeks} wk &times; ${d.effort}%)</span><span class="val">${fmt(Math.round(periodCosts))}</span></div>
+${d.additionalCosts>0?`<div class="rpt-row indent"><span>Additional Job Costs</span><span class="val">+${fmt(d.additionalCosts)}</span></div>`:""}
+<div class="rpt-row total"><span>Total Costs</span><span class="val">${fmt(Math.round(totalCosts))}</span></div></div>
 
-  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Operations</div>`;
-  rpt+=`<div class="rpt-row indent"><span>Weeks of Production</span><span class="val">${sp.weeksOfProduction}</span></div>`;
-  rpt+=`<div class="rpt-row indent"><span>Annual Payroll</span><span class="val">${fmt(sp.annualPayroll)}</span></div>`;
-  rpt+=`<div class="rpt-row indent"><span>Fuel</span><span class="val">${sp.fuelGallonsPerWeek} gal/wk @ ${fmtDec(sp.fuelPricePerGallon)}</span></div>`;
-  rpt+=`</div>`;
+<div class="rpt-results"><div class="rpt-metric${profit<0?" loss":""}"><div class="rpt-metric-label">${profit>=0?"Profit":"Loss"}</div><div class="rpt-metric-val">${fmt(Math.round(profit))}</div></div>
+<div class="rpt-metric${roi<0?" loss":""}"><div class="rpt-metric-label">Return on Investment</div><div class="rpt-metric-val">${pct(roi)}</div></div>
+<div class="rpt-metric"><div class="rpt-metric-label">Investment</div><div class="rpt-metric-val">${fmt(investment)}</div></div></div>
 
-  rpt+=`</div></div>`;
+<div class="rpt-footer"><span>PATH 4.0 &mdash; Planning &amp; Analysis in Timber Harvesting</span><span>Northeast Forests LLC &mdash; path.lumbermen.org</span></div>
 
-  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Production &amp; Revenue — ${tfLabel}</div>`;
-  rpt+=`<table class="rpt-products"><tr><th>Product</th><th>Net/Load</th><th>Loads</th><th>Revenue</th></tr>${prodRows}</table>`;
-  if(d.additionalRevenue>0) rpt+=`<div class="rpt-row indent"><span>Additional Revenue</span><span class="val">+${fmt(d.additionalRevenue)}</span></div>`;
-  rpt+=`<div class="rpt-row total"><span>Total Revenue (${totalLoads} loads)</span><span class="val">${fmt(totalRevenue)}</span></div></div>`;
-
-  rpt+=`<div class="rpt-section"><div class="rpt-section-title">Costs — ${tfLabel}</div>`;
-  rpt+=`<div class="rpt-row indent"><span>Operating Costs (${periodWeeks} wk × ${d.effort}%)</span><span class="val">${fmt(Math.round(periodCosts))}</span></div>`;
-  if(d.additionalCosts>0) rpt+=`<div class="rpt-row indent"><span>Additional Job Costs</span><span class="val">+${fmt(d.additionalCosts)}</span></div>`;
-  rpt+=`<div class="rpt-row total"><span>Total Costs</span><span class="val">${fmt(Math.round(totalCosts))}</span></div></div>`;
-
-  rpt+=`<div class="rpt-results"><div class="rpt-metric${profit<0?" loss":""}"><div class="rpt-metric-label">${profit>=0?"Profit":"Loss"}</div><div class="rpt-metric-val">${fmt(Math.round(profit))}</div></div>`;
-  rpt+=`<div class="rpt-metric${roi<0?" loss":""}"><div class="rpt-metric-label">Return on Investment</div><div class="rpt-metric-val">${pct(roi)}</div></div>`;
-  rpt+=`<div class="rpt-metric"><div class="rpt-metric-label">Investment</div><div class="rpt-metric-val">${fmt(investment)}</div></div></div>`;
-
-  rpt+=`<div class="rpt-footer"><span>PATH 4.0 — Planning &amp; Analysis in Timber Harvesting</span><span>Northeast Forests LLC — <a href="https://path.lumbermen.org">path.lumbermen.org</a></span></div>`;
-
-  document.getElementById("report").innerHTML=rpt;
-  window.print();
+</body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),300);
 }
 
 function renderPATHWAYS(){
